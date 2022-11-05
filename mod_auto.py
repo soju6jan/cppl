@@ -6,7 +6,7 @@ from .setup import *
 
 class ModuleAuto(PluginModuleBase):
     def __init__(self, P):
-        super(ModuleAuto, self).__init__(P, name='auto', first_menu='setting')
+        super(ModuleAuto, self).__init__(P, name='auto', first_menu='setting', scheduler_desc="쿠팡플레이 프로그램별 자동")
         self.db_default = {
             f"{self.name}_auto_start": "False",
             f"{self.name}_interval": "0 5 * * *",
