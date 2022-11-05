@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+<form>
+  {{ macros.setting_input_text_and_buttons('url', 'URL or Code', [['analyze_btn', '분석'], ['globalOpenBtn', '쿠팡플레이', [['url','https://www.coupangplay.com/home']] ]], value=arg['select_recent_code'], desc='URL & Program Code & Episode Code & Movie Code') }}
+</form>
+<div id='detail1'></div>
+<div id="more"></div>
+
+<script type="text/javascript">
+hideMenuPage();
+
+$(document).ready(function(){
+  if ( "{{arg['code']}}" != "None" && "{{arg['code']}}" != "" ) {
+    $("#url").val("{{arg['code']}}");
+    $("#analyze_btn").click();
+  }
+});
+
+$("body").on('click', '#analyze_btn', function(e) {
+  e.preventDefault();
+  if ($("#url").val() == "") {
+    $.notify('<strong>URL이나 Code를 입력하세요.</strong>', {
+      type: 'warning'
+    });
+    return;
+  }
+  globalSendCommand('analyze', $("#url").val(), null, null, function(ret){
+    make_analyse_result(ret);
+  });
+});
+
+$("body").on('click', '#download_btn', function(e){
+  e.preventDefault();
+  globalSendCommand('download', $(this).data('code'));
+});
+
+$("body").on('click', '#download_force_btn', function(e){
+  e.preventDefault();
+  code = $(this).data('code');
+  globalSendCommand("download", code, true);
+});
+
+
+$("body").on('click', '#all_check_on_btn', function(e){
+  e.preventDefault();
+  $('input[id^="checkbox|"]').bootstrapToggle('on');
+});
+
+$("body").on('click', '#all_check_off_btn', function(e){
+  e.preventDefault();
+  $('input[id^="checkbox|"]').bootstrapToggle('off');
+});
+
+
+$("body").on('click', '#more_btn', function(e){
+  e.preventDefault();
+  page = parseInt($(this).data('page')) + 1;
+  globalSendCommand('program_page', current_data.code, $('#select_season').val(), page, function(ret){
+    make_program_page(ret);
+  });
+});
+
+$("body").on('change', '#select_season', function(e){
+  e.preventDefault();
+  globalSendCommand('program_page', current_data.code, $('#select_season').val(), 1, function(ret){
+    make_program_page(ret);
+  });
+});
+
+$("body").on('click', '#check_download_btn', function(e){
+  e.preventDefault();
+  all = $('input[id^="checkbox|"]');
+  str = "";
+  for (i in all) {
+    if (all[i].checked){
+      code = all[i].id.split('|')[1];
+      str += code+",";
+    }
+  }
+  if (str == "") {
+    notify('선택하세요.', 'warning');
+    return;
+  }
+  globalSendCommand("download_program_check", str);
+});
+
+
+function make_analyse_result(data) {
+  console.log(data)
+  current_data = data
+  if (data['url_type'] == 'None') {
+    $.notify('<strong>유효한 값이 아닙니다.</strong>', {
+      type: 'warning'
+    });
+    return
+  }
+  if (data['content_type'] == 'TVSHOW') {
+    make_program_page(data);
+    return;
+  } else if (data['content_type'] == 'MOVIE') {
+    make_movie(data);
+  }
+}
+
+function make_movie(data) {
+  str = j_row_start();
+  tmp = '<img src="' + data.info.data.images.poster.url + '" class="img-fluid">';
+  str += j_col(3, tmp);
+  tmp = '<strong>' + data.info.data.title + '</strong>'+ ' / ' + data.info.data.age_rating + '<br>';
+  tmp += data.info.data.short_description + '<br>';
+  tmp += data.info.data.description + '<br>';
+  tmp += "expires_on: " + data.info.data.expires_on.split('T')[0] + '<br>';
+  tmp += "<br><br>";
+  if (data.play_info == null) {
+    tmp += '다운로드 권한 없음<br><br>';
+  } else {
+    tmp += '<div class="form-inline">'
+    tmp2 = j_button('download_btn', '다운로드 추가', {'code':data.code});
+    tmp2 += j_button('download_force_btn', '다운로드 추가 (DB무시)', {'code':data.code});
+    tmp += j_button_group(tmp2);
+    tmp += '</div>';
+  }
+  str += j_col(9, tmp)
+  str += j_row_end();
+  $("#detail1").html(str);
+  $("#more").html('');
+}
+
+function make_program_page(ret) {
+  str = '';
+  data = ret.episodes.data;
+  if (ret.page == '1') {
+    tmp = '<div class="form-inline">'
+    tmp2 = j_button('check_download_btn', '선택 다운로드 추가');
+    tmp2 += j_button('all_check_on_btn', '전체 선택');
+    tmp2 += j_button('all_check_off_btn', '전체 해제');
+    tmp += j_button_group(tmp2);
+    tmp += '&nbsp;&nbsp;&nbsp;&nbsp;<select id="select_season"  class="form-control form-control-sm">';
+    for (var i=1 ; i <= ret.info.data.seasons ; i++) {
+      tmp += '<option value="'+i+'" '+((ret.season==i)?'selected':'')+'>시즌 '+i+'</option>'
+    }
+    tmp += `</select>`;
+    tmp += '</div>';
+    str += tmp;
+  }
+  str += j_hr(0);
+  for (i in data) {
+    //console.log(data[i].images)
+    str += j_row_start();
+    tmp = '<img src="' + data[i].images['story-art'].url + '" class="img-fluid">';
+    str += j_col(3, tmp);
+    tmp = '<strong>' + ret.info.data.title +' | ' + data[i].title + '</strong><br>';
+    tmp += data[i].description + '<br>';
+    tmp += "시즌 : " + data[i].season +  " - 회차 : " + data[i].episode + '<br>';
+    tmp += '<div class="form-inline">'
+    tmp += '<input id="checkbox|'+data[i].id+'" name="checkbox|'+data[i].id+'" type="checkbox" checked data-toggle="toggle" data-on="선 택" data-off="-" data-onstyle="primary" data-offstyle="danger" data-size="small">&nbsp;&nbsp;&nbsp;&nbsp;';
+    tmp2 = j_button('download_btn', '다운로드 추가', {'code':data[i].id});
+    tmp2 += j_button('download_force_btn', '다운로드 추가 (DB무시)', {'code':data[i].id});
+    tmp += j_button_group(tmp2);
+    tmp += '</div>';
+    str += j_col(9, tmp)
+    str += j_row_end();
+    if (i != data.length -1) str += j_hr(0);
+  }
+  str += "<div id='detail"+(parseInt(ret.episodes.pagination.page)+1)+"'></div>"
+  document.getElementById("detail"+parseInt(ret.episodes.pagination.page)).innerHTML = str;
+
+  if (ret.episodes.pagination.page != ret.episodes.pagination.totalPages) {
+    str = '<div class="d-inline-block"></div><form>';
+    str += '<button id="more_btn" class="btn btn-outline-secondary btn-lg btn-block" type="button" data-page="'+ret.episodes.pagination.page+'">More</button>'
+    str += '</form>';
+    $("#more").html(str);
+  } else {
+    $("#more").html('');
+  }
+  $('input[id^="checkbox|"]').bootstrapToggle()
+}
+
+
+</script>    
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+{{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
+{{ macros.m_row_start('5') }}
+{{ macros.m_row_end() }}
+
+<form id="setting">
+{{ macros.setting_input_text('basic_save_path', '저장 폴더', value=arg['basic_save_path'], desc=['절대경로 혹은 {PATH_DATA}/download 와 같은 데이터 폴더 기준 상대 경로']) }}
+{{ macros.setting_checkbox('basic_make_title_folder', '제목 폴더 생성', value=arg['basic_make_title_folder'], desc=['제목 폴더 이름으로 폴더를 생성하고 다운로드합니다.']) }}
+{{ macros.setting_input_int('basic_max_download_count', '동시 다운로드 수', value=arg['basic_max_download_count'], desc=None) }}
+{{ macros.setting_checkbox('basic_incompleted_redownload', '자동으로 다시 받기', value=arg['basic_incompleted_redownload'], desc='On : 플러그인 로딩시 미완료인 항목은 자동으로 다시 받습니다.') }}
+{{ macros.m_hr() }}
+{{ macros.setting_input_textarea('basic_curl', 'cURL 정보', desc=['매뉴얼 참고'], value=arg['basic_curl'], row='20') }}
+</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+});
+
+</script>    
+{% endblock %}

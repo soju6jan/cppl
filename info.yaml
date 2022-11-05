@@ -1,0 +1,12 @@
+title: "웨이브"
+version: "1.0.0"
+package_name: "cppl"
+developer: "soju6jan"
+description: "쿠팡플레이 VOD 다운로더"
+home: "https://github.com/soju6jan/cppl"
+more: "https://raw.githubusercontent.com/soju6jan/cppl/main/README.md"
+
+require_plugin: 
+  - "https://github.com/soju6jan/sjva"
+  - "https://github.com/soju6jan/wv_tool"
+
