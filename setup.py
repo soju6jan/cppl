@@ -1,4 +1,4 @@
-DEFINE_DEV = True
+DEFINE_DEV = False
 
 setting = {
     'filepath' : __file__,
@@ -36,7 +36,7 @@ setting = {
                 'uri': 'manual',
                 'name': '매뉴얼',
                 'list': [
-                    {'uri': 'files/manual.md' if DEFINE_DEV else "files/manual.mdd", 'name': '기본'},
+                    {'uri': 'files/manual.md' if DEFINE_DEV else "files/manual.mdf", 'name': '기본'},
                 ]
             },
             {
