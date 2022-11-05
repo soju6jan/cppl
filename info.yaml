@@ -8,5 +8,6 @@ more: "https://raw.githubusercontent.com/soju6jan/cppl/main/README.md"
 
 require_plugin: 
   - "https://github.com/soju6jan/sjva"
+  - "https://github.com/flaskfarm/support_site"
   - "https://github.com/soju6jan/wv_tool"
 
