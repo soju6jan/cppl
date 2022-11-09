@@ -120,8 +120,8 @@ class ModuleBasic(PluginModuleBase):
                 logger.error(traceback.format_exc())
 
 
-    def reset_db(self):
-        return ModelCoupangPlay.delete_all()
+    def db_delete(self, day):
+        return ModelCoupangPlay.delete_all(day=day)
 
     def incompleted_redownload(self):
         failed_list = ModelCoupangPlay.get_incompleted()

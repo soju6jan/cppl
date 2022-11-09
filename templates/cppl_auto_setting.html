@@ -2,9 +2,9 @@
 {% block content %}
 
 {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장'], ['globalOneExecuteBtn', '1회 실행'], ['globalImmediatelyExecuteBtn', '즉시 실행']])}}
-
 {{ macros.m_row_start('5') }}
 {{ macros.m_row_end() }}
+{{ macros.m_hr() }}
 
 <form id="setting">
 {{ macros.global_setting_scheduler_button(arg['is_include'], arg['is_running']) }}
