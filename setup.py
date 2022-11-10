@@ -4,7 +4,7 @@ setting = {
     'filepath' : __file__,
     'use_db': True,
     'use_default_setting': True,
-    'home_module': 'select',
+    'home_module': None,
     'menu': {
         'uri': __package__,
         'name': '쿠팡플레이',
