@@ -86,7 +86,6 @@ $("body").on('click', '#check_download_btn', function(e){
 
 
 function make_analyse_result(data) {
-  console.log(data)
   current_data = data
   if (data['url_type'] == 'None') {
     $.notify('<strong>유효한 값이 아닙니다.</strong>', {
