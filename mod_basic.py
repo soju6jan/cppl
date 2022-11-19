@@ -116,7 +116,7 @@ class ModuleBasic(PluginModuleBase):
                 self.current_download_count += 1
                 self.download_queue.task_done() 
             except Exception as e: 
-                logger.error('Exception:%s', e)
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
 
 
