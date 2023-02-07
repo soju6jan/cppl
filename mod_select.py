@@ -1,4 +1,3 @@
-import wv_tool
 from support_site import SupportCppl
 
 from .mod_basic import ModelCoupangPlay
